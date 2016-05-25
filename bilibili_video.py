@@ -24,10 +24,12 @@ head = {
 
 time1 = time.time()
 
-for i in range(17501, 100000):
-    url = 'http://bilibili.com/video/av' + str(i)
-    urls.append(url)
+#for i in range(17501, 100000):
+#    url = 'http://bilibili.com/video/av' + str(i)
+#    urls.append(url)
 
+url = 'http://bilibili.com/video/av4662997'
+urls.append(url)
 
 def spider(url):
     html = requests.get(url, headers=head)
@@ -41,6 +43,7 @@ def spider(url):
             tminfo1_log = each.xpath('//div[@class="tminfo"]/a/text()')
             tminfo2_log = each.xpath('//div[@class="tminfo"]/span[1]/a/text()')
             tminfo3_log = each.xpath('//div[@class="tminfo"]/span[2]/a/text()')
+            #print tminfo2_log,tminfo3_log[0].encode('utf-8')
             if tminfo1_log:
                 tminfo1 = tminfo1_log[0]
             else:
@@ -55,7 +58,10 @@ def spider(url):
                 tminfo3 = ""
             tminfo = tminfo1 + '-' + tminfo2 + '-' + tminfo3
             time_log = each.xpath('//div[@class="tminfo"]/time/i/text()')
-            mid_log = each.xpath('//div[@class="b-btn f"]/@mid')
+            mid_log = each.xpath('//div[@class="b-btn f hide"]/@mid')
+            #mid_log = each.xpath('//div/[@class="b-btn f"]')
+            print mid_log
+            #print each.xpath('//div[@class="b-btn f hide"]/text()')
             name_log = each.xpath('//div[@class="usname"]/a/@title')
             article_log = each.xpath('//div[@class="up-video-message"]/div[1]/text()')
             fans_log = each.xpath('//div[@class="up-video-message"]/div[2]/text()')
@@ -161,10 +167,11 @@ def spider(url):
                         jsData = jsDict['data']
                         jsPages = jsData['page']
                         common = jsPages['acount']
+                        print mid
                         try:
                             conn = MySQLdb.connect(host='localhost', user='root', passwd='', port=3306, charset='utf8')
                             cur = conn.cursor()
-                            conn.select_db('python')
+                            conn.select_db('bili')
                             cur.execute('INSERT INTO video VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
                                                 [str(av), str(av), cid, title, tminfo, time, click, danmu, coins, favourites, duration,
                                                  mid, name, article, fans, tag1, tag2, tag3, str(common), honor_click, honor_coins, honor_favourites])
